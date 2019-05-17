@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>合成图片</title>
+    <style>
+        .addBorder {
+            border: 1px solid #ccc;
+        }
+
+        #imgDiv {
+            width: 50%;
+
+        }
+
+        #imgContent {
+            width: 100%;
+
+        }
+    </style>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <form id="imgForm">
+        <input type="file" class="addBorder">
+        <br />
+        <input type="text" placeholder="9楼502室" id="info">
+        <input type="number" placeholder="8" id="time">
+        <button type="button" onclick="loadImg()">获取图片</button>
+    </form>
+
+    <div class="addBorder" id="imgDiv">
+        <img id="imgContent">
+    </div>
+    <script>
+
+        var time = $('#time'),
+            info = $('#info');
+
+        function loadImg() {
+            //获取文件
+            var file = $("#imgForm").find("input")[0].files[0];
+
+            //创建读取文件的对象
+            var reader = new FileReader();
+
+            //创建文件读取相关的变量
+            var imgFile;
+
+            var img=new Image();
+
+            //为文件读取成功设置事件
+            reader.onload = function (e) {
+                // alert('文件读取完成');
+                imgFile = e.target.result;
+
+                var t = time.val();
+                var text = info.val();
+                var date = new Date();
+
+                var t1 = date.toISOString().replace(/\T.*/ig, '');
+                if (t < 24 && t >= 0) {
+                    t = t.toString();
+                    if (t.length == 1) {
+                        t = "0" + t;
+                    };
+                }
+
+                let min=getRandom();
+
+                let second=getRandom();
+
+                let ntime=new Date(t1 + "T" +t+":"+min+":"+second);
+
+                ntime=ntime.toISOString().replace('T',' ').replace(/\..*/ig,'')
+
+                
+                img.src=imgFile;
+
+                img.onload=function(){
+                    let canvas=document.createElement('canvas');
+                    let ctx=canvas.getContext('2d');
+                    let w=img.naturalWidth,
+                        h=img.naturalHeight;
+                    canvas.width=w;
+                    canvas.height=h;
+
+                    ctx.drawImage(img,0,0);
+
+                    ctx.font = h * 0.1 + "px Arial";
+                    ctx.fillStyle="white";
+                    ctx.fillText(text, (w - ctx.measureText(text).width) * 0.5, h * 0.8);
+
+                    ctx.font = h * 0.05 + "px Arial";
+                    ctx.fillStyle="white";
+                    ctx.fillText(ntime, (w - ctx.measureText(ntime).width) * 0.5, h * 0.9);
+
+                    let imgBase64=canvas.toDataURL();
+                    console.log(imgBase64);
+                    $("#imgContent").attr('src', imgBase64);
+                    // $("body").append(canvas)
+                }
+
+                
+
+            };
+
+            //正式读取文件
+            reader.readAsDataURL(file);
+        }
+        
+            function getRandom(){
+                let min=Math.round(Math.random()*60);
+
+                if (min>=60) {
+                    min=12;
+                };
+
+                min=min.toString();
+
+                if (min.length==1) {
+                    min="0"+min;
+                };
+
+                return min
+            }
+        
+        </script>
+</body>
+
+</html>
