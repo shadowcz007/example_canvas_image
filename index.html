@@ -69,16 +69,16 @@
                         t = "0" + t;
                     };
                 }
-
+                
                 let min=getRandom();
 
                 let second=getRandom();
 
                 let ntime=new Date(t1 + "T" +t+":"+min+":"+second);
+                // console.log(t1 + "T" +t+":"+min+":"+second)
 
-                ntime=ntime.toISOString().replace('T',' ').replace(/\..*/ig,'')
+                ntime=ntime.toLocaleDateString().replace(/\//ig,'-')+" "+ntime.toTimeString().replace(/\s.*/ig,'')
 
-                
                 img.src=imgFile;
 
                 img.onload=function(){
@@ -100,7 +100,7 @@
                     ctx.fillText(ntime, (w - ctx.measureText(ntime).width) * 0.5, h * 0.9);
 
                     let imgBase64=canvas.toDataURL();
-                    console.log(imgBase64);
+                    // console.log(imgBase64);
                     $("#imgContent").attr('src', imgBase64);
                     // $("body").append(canvas)
                 }
